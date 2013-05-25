@@ -8,7 +8,7 @@ sized = claire.sized;
 
 PosInt = claire.transform(Math.abs, claire.data.Int);
 
-posIntOf = function(n) {
+function posIntOf(n) {
   return claire.sized(function() { return n; }, PosInt);
 }; //returns a generator of ints from 0 to n - 1
 
