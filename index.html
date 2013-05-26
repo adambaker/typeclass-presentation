@@ -15,7 +15,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 		<link rel="stylesheet" href="css/reveal.min.css">
-		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+    <link rel="stylesheet" href="css/theme/serif.css" id="theme">
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -36,114 +36,79 @@
 
 			<!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
-          <section>
-              <h1>Functional Programming's Relentless Bug Hunter: Claire</h1>
-      <div>Adam Baker</div>
-      <div>adam@dobetter.com</div>
-          </section>
-          <section>
-              <h2>Invariants!</h2>
-      <div>
-      <br>
-      </div>
-      <div>We are used to writing tests like this:</div>
-      <div>
+        <section>
+          <h1>Functional Programming's Relentless Bug Hunter: Claire</h1>
+          <div>Adam Baker</div>
+          <div>adam@dobetter.com</div>
+        </section>
+        <section>
+          <h2>Invariants!</h2>
           <br>
-      </div>
-      <div>
-          <i>e</i>
-      <sup>π<i>i</i>
-      </sup> = -1
-      </div>
-      <div>
-          <br>
-      </div>
-      <p>We should start writing tests like this:</p>
-          <p>
-          <br>
-              </p>
-      <p>
-          ∀<i>x. e<sup>xi</sup>
-          </i>
-      <i>&nbsp;</i>
-      = cos(
-      <i>x</i>
-      ) + <i>i</i> sin(
-      <i>x</i>
-      )
-      </p>
-      <div>
-      </div>
-
-
-
-
-
-
-
-
-
-      </section>
-          <section>
-              <h2>Invariants!</h2>
-      <div>
-              <br>
+          <div>We are used to writing tests like this:
+            <br>
+            <br>
+            <i>e</i><sup>π<i>i</i></sup> = -1
           </div>
-      <div>An old idea in computer science</div>
-      <div>
           <br>
-      </div>
-      <div>
-      <ul>
-      <li>Preconditions and Postconditions</li>
-      <li>Loop Invariants</li>
-      <li>Usually expressed in a functional language</li>
-      </ul>
-      </div>
-      </section>
-      <section>
+          <div class='fragment'>We should start writing tests like this:
+            <br><br>
+            ∀<i>x. e<sup>xi</sup> </i> = cos(<i>x</i>) + <i>i</i> sin(<i>x</i>)
+          </div>
+        </section>
+
+        <section>
+          <h2>Invariants!</h2>
+          <br>
+          <div>An old idea in computer science</div>
+          <br>
+          <div>
+            <ul>
+              <li class="fragment">Preconditions and Postconditions</li>
+              <li class="fragment">Loop Invariants</li>
+            </ul>
+          </div>
+          <br>
+          <div class="fragment">Usually expressed in a functional language</div>
+        </section>
+        <section>
           <h2>The Strategy</h2>
-      <div>
-          <br>
-      </div>
-      <div>
-      <p>
-      </p>
-      <ol>
-      <li>
-      <span>Define generators</span>
-      </li>
-      <li>
-      <span>Identify&nbsp;</span>invariants</li>
-      <li>
-      <span>Convert to Claire property</span>
-      </li>
-      <li>
-      <span>Test property on generated data</span>
-      </li>
-      <li>
-      <span>...</span>
-      </li>
-      <li>
-      <span>No more bugs!</span>
-      </li>
-      </ol>
-      </div>
-      </section>
+          <ol>
+            <li> Define generators
+            <li class='fragment'> Identify invariants
+            <li class='fragment'> Convert to Claire property
+            <li class='fragment'> Test property on generated data
+            <li class='fragment'> ...
+            <li class='fragment'> No more bugs!
+          </ol>
+        </section>
+
       <section>
-          <h2>Generators, Properties, Tests</h2>
-      <div>
-          <br>
-      </div>
-      <div>
-      <pre><code>var claire = require('claire')</code><code>var _ = claire.data</code><code><br></code><code>                  //two generators, Int and Num</code><code>var commutativity = claire.forAll(_.Int, _.Num)</code><code>  .satisfy(function(integer, real){ <b style="font-family: monospace; font-size: 20px; font-style: normal; font-variant: normal;"> //the property being tested</b></code><code>    return integer+real === real+integer</code><code>  }).asTest() //returns a function</code><code><br></code><code>//use it in mocha</code><code>describe('addition', function(){</code><code>  it('is commutative', commutativity)</code><code>})</code><code><br></code><code>//or invoke it to see the results</code><code>commutativity() //passes silently</code></pre>
-      </div>
+        <h2>Generators, Properties, Tests</h2>
+        <div>
+          <pre><code class='javascript'>
+var claire = require('claire')
+var _ = claire.data
+
+                  //two generators, Int and Num
+var commutativity = claire.forAll(_.Int, _.Num)
+  .satisfy(function(integer, real){  //the property being tested
+    return integer+real === real+integer
+  }).asTest() //returns a function
+
+//use it in mocha
+describe('addition', function(){
+  it('is commutative', commutativity)
+})
+
+//or invoke it to see the results
+commutativity() //passes silently
+          </code></pre>
+        </div>
       </section>
+
       <section>
-      <h2>Diagnosing Properties</h2>
-      <h2>
-          <span style="color: rgb(220, 220, 220); font-family: monospace; text-align: left; white-space: pre-wrap;"> </span>
-      </h2>
+        <h2>Diagnosing Properties</h2>
+        <br>
       <div>
       <pre><code>var sorted_p = forAll( _.Array(_.Int) )
         .satisfy(function(xs) {
@@ -161,48 +126,28 @@
 
       </code></pre>
       </div>
-
-
-
       </section>
+
       <section>
-          <h2>A Simple Example</h2>
-      <div>
-          <br>
-          </div>
-      <div>From a real app</div>
-      <div>To the command line!</div>
+        <h2>A Simple Example</h2>
+        <div>From a real app</div>
+        <div>To the command line!</div>
       </section>
+
       <section>
-          <h2>Another Real World Example</h2>
-      <div>Deep copy of a Class for dobetter.com</div>
-      <div>
-          <br>
-      </div>
-      <div>Requirements:</div>
-      <div>
-      <br>
-      </div>
-      <div>
-      <ul>
-      <li>
-      <span style="text-align: center;">Must copy it's own attributes, except it's start date.</span>
-      </li>
-      <li style="text-align: left;">
-      <span style="text-align: center;">Must copy each unit's attributes, except for release job</span>
-      </li>
-      <li style="text-align: left;">
-      <span style="text-align: center;">Each item in a unit must be cloned.</span>
-      </li>
-      <li style="text-align: left;">
-      <span style="text-align: center;">Non-Model attributes can be aliased, but Model attributes must not be</span>
-      </li>
-      </ul>
-      <div>
-      <br>
-      </div>
-      </div>
-      <div>Let's see some code</div>
+        <h2>Another Real World Example</h2>
+        <div>Deep copy of a Class for dobetter.com</div>
+        <br>
+        <div>Requirements:</div>
+        <br>
+        <ul>
+          <li class='fragment'>Must copy it's own attributes, except it's start date.
+          <li class='fragment'>Must copy each unit's attributes, except for release job
+          <li class='fragment'>Each item in a unit must be cloned.
+          <li class='fragment'>Non-Model attributes can be aliased, but Model attributes must not be
+        </ul>
+        <br><br>
+        <div class='fragment'>Let's see some code</div>
       </section>
       <section>
           <h2>Properties of Addition and Multiplication</h2>
@@ -498,7 +443,7 @@
 				center: true,
 
 				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+				transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
 
 				// Optional libraries used to extend on reveal.js
 				dependencies: [
