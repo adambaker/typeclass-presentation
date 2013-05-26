@@ -35,299 +35,452 @@
 		<div class="reveal">
 
 			<!-- Any section element inside of this container is displayed as a slide -->
-			<div class="slides">
+      <div class="slides">
+          <section>
+              <h1>Functional Programming's Relentless Bug Hunter: Claire</h1>
+      <div>Adam Baker</div>
+      <div>adam@dobetter.com</div>
+          </section>
+          <section>
+              <h2>Invariants!</h2>
+      <div>
+      <br>
+      </div>
+      <div>We are used to writing tests like this:</div>
+      <div>
+          <br>
+      </div>
+      <div>
+          <i>e</i>
+      <sup>π<i>i</i>
+      </sup> = -1
+      </div>
+      <div>
+          <br>
+      </div>
+      <p>We should start writing tests like this:</p>
+          <p>
+          <br>
+              </p>
+      <p>
+          ∀<i>x. e<sup>xi</sup>
+          </i>
+      <i>&nbsp;</i>
+      = cos(
+      <i>x</i>
+      ) + <i>i</i> sin(
+      <i>x</i>
+      )
+      </p>
+      <div>
+      </div>
 
-				<section>
-					<h1>Reveal.js</h1>
-					<h3>HTML Presentations Made Easy</h3>
-					<p>
-						<small>Created by <a href="http://hakim.se">Hakim El Hattab</a> / <a href="http://twitter.com/hakimel">@hakimel</a></small>
-					</p>
-				</section>
 
-				<section>
-					<h2>Heads Up</h2>
-					<p>
-						reveal.js is a framework for easily creating beautiful presentations using HTML. You'll need a browser with
-						support for CSS 3D transforms to see it in its full glory.
-					</p>
 
-					<aside class="notes">
-						Oh hey, these are some notes. They'll be hidden in your presentation, but you can see them if you open the speaker notes window (hit 's' on your keyboard).
-					</aside>
-				</section>
 
-				<!-- Example of nested vertical slides -->
-				<section>
-					<section>
-						<h2>Vertical Slides</h2>
-						<p>
-							Slides can be nested inside of other slides,
-							try pressing <a href="#" class="navigate-down">down</a>.
-						</p>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 1</h2>
-						<p>Press down or up to navigate.</p>
-					</section>
-					<section>
-						<h2>Basement Level 2</h2>
-						<p>Cornify</p>
-						<a class="test" href="http://cornify.com">
-							<img width="280" height="326" src="https://s3.amazonaws.com/hakim-static/reveal-js/cornify.gif" alt="Unicorn">
-						</a>
-					</section>
-					<section>
-						<h2>Basement Level 3</h2>
-						<p>That's it, time to go back up.</p>
-						<a href="#/2" class="image">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(180deg);">
-						</a>
-					</section>
-				</section>
 
-				<section>
-					<h2>Slides</h2>
-					<p>
-						Not a coder? No problem. There's a fully-featured visual editor for authoring these, try it out at <a href="http://slid.es" target="_blank">http://slid.es</a>.
-					</p>
-				</section>
 
-				<section>
-					<h2>Point of View</h2>
-					<p>
-						Press <strong>ESC</strong> to enter the slide overview.
-					</p>
-					<p>
-						Hold down alt and click on any element to zoom in on it using <a href="http://lab.hakim.se/zoom-js">zoom.js</a>. Alt + click anywhere to zoom back out.
-					</p>
-				</section>
 
-				<section>
-					<h2>Works in Mobile Safari</h2>
-					<p>
-						Try it out! You can swipe through the slides and pinch your way to the overview.
-					</p>
-				</section>
 
-				<section>
-					<h2>Marvelous Unordered List</h2>
-					<ul>
-						<li>No order here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-						<li>Or here</li>
-					</ul>
-				</section>
 
-				<section>
-					<h2>Fantastic Ordered List</h2>
-					<ol>
-						<li>One is smaller than...</li>
-						<li>Two is smaller than...</li>
-						<li>Three!</li>
-					</ol>
-				</section>
+      </section>
+          <section>
+              <h2>Invariants!</h2>
+      <div>
+              <br>
+          </div>
+      <div>An old idea in computer science</div>
+      <div>
+          <br>
+      </div>
+      <div>
+      <ul>
+      <li>Preconditions and Postconditions</li>
+      <li>Loop Invariants</li>
+      <li>Usually expressed in a functional language</li>
+      </ul>
+      </div>
+      </section>
+      <section>
+          <h2>The Strategy</h2>
+      <div>
+          <br>
+      </div>
+      <div>
+      <p>
+      </p>
+      <ol>
+      <li>
+      <span>Define generators</span>
+      </li>
+      <li>
+      <span>Identify&nbsp;</span>invariants</li>
+      <li>
+      <span>Convert to Claire property</span>
+      </li>
+      <li>
+      <span>Test property on generated data</span>
+      </li>
+      <li>
+      <span>...</span>
+      </li>
+      <li>
+      <span>No more bugs!</span>
+      </li>
+      </ol>
+      </div>
+      </section>
+      <section>
+          <h2>Generators, Properties, Tests</h2>
+      <div>
+          <br>
+      </div>
+      <div>
+      <pre><code>var claire = require('claire')</code><code>var _ = claire.data</code><code><br></code><code>                  //two generators, Int and Num</code><code>var commutativity = claire.forAll(_.Int, _.Num)</code><code>  .satisfy(function(integer, real){ <b style="font-family: monospace; font-size: 20px; font-style: normal; font-variant: normal;"> //the property being tested</b></code><code>    return integer+real === real+integer</code><code>  }).asTest() //returns a function</code><code><br></code><code>//use it in mocha</code><code>describe('addition', function(){</code><code>  it('is commutative', commutativity)</code><code>})</code><code><br></code><code>//or invoke it to see the results</code><code>commutativity() //passes silently</code></pre>
+      </div>
+      </section>
+      <section>
+      <h2>Diagnosing Properties</h2>
+      <h2>
+          <span style="color: rgb(220, 220, 220); font-family: monospace; text-align: left; white-space: pre-wrap;"> </span>
+      </h2>
+      <div>
+      <pre><code>var sorted_p = forAll( _.Array(_.Int) )
+        .satisfy(function(xs) {
+          xs = sorted(xs)
+          return xs.every(function(a, i) {
+            return i == 0 || a &gt;= xs[i - 1]
+          })
+        }).classify(function(xs) {
+          return xs.length == 0 || xs.length == 1?  'trivial' : '&gt; 1'
+        }).asTest({verbose: true, times: 1000})()</code><code>
+      //  + OK passed 1000 tests.
+      //  &gt; Collected test data:
+      //      o 98% - &gt; 1
+      //      o 2% - trivial
 
-				<section data-markdown>
-					<script type="text/template">
-						## Markdown support
+      </code></pre>
+      </div>
 
-						For those of you who like that sort of thing. Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
 
-						```
-						<section data-markdown>
-						  ## Markdown support
 
-						  For those of you who like that sort of thing.
-						  Instructions and a bit more info available [here](https://github.com/hakimel/reveal.js#markdown).
-						</section>
-						```
-					</script>
-				</section>
+      </section>
+      <section>
+          <h2>A Simple Example</h2>
+      <div>
+          <br>
+          </div>
+      <div>From a real app</div>
+      <div>To the command line!</div>
+      </section>
+      <section>
+          <h2>Another Real World Example</h2>
+      <div>Deep copy of a Class for dobetter.com</div>
+      <div>
+          <br>
+      </div>
+      <div>Requirements:</div>
+      <div>
+      <br>
+      </div>
+      <div>
+      <ul>
+      <li>
+      <span style="text-align: center;">Must copy it's own attributes, except it's start date.</span>
+      </li>
+      <li style="text-align: left;">
+      <span style="text-align: center;">Must copy each unit's attributes, except for release job</span>
+      </li>
+      <li style="text-align: left;">
+      <span style="text-align: center;">Each item in a unit must be cloned.</span>
+      </li>
+      <li style="text-align: left;">
+      <span style="text-align: center;">Non-Model attributes can be aliased, but Model attributes must not be</span>
+      </li>
+      </ul>
+      <div>
+      <br>
+      </div>
+      </div>
+      <div>Let's see some code</div>
+      </section>
+      <section>
+          <h2>Properties of Addition and Multiplication</h2>
+      <div>
+          <ul>
+      <li>associativity: (a+b)+c = a+(b+c)</li>
+              <li>commutativity: a+b = b+a</li>
+              <li>identity: a+0 = a</li>
+              <li>closure:&nbsp;∀a,b&nbsp;∈ ℤ. (a+b) ∈ ℤ</li>
+          </ul>
+      <div style="text-align: left;">
+          <br>
+      </div>
+      <div style="text-align: center;">Test with Int, Num, and BigInt</div>
+      <div style="text-align: center;">for both addition and multiplication</div>
+      <div style="text-align: center;">
+      <br>
+      </div>
+      <div style="text-align: center;">Which ones fail?</div>
+      </div>
+      </section>
+      <section>
+          <h2>Properties of Addition and Multiplication</h2>
+      <div>
+          <br>
+      </div>
+      <div>Two failures:</div>
+      <div>
+      <br>
+      </div>
+      <div>Num fails associativity of multiplication&nbsp;</div>
+      <div>BigInt fails associativity of addition</div>
+      <div>
+      <br>
+      </div>
+      <div>Why?</div>
+      </section>
+      <section>
+          <h2>A Look Inside</h2>
+      <div>Some basic generators:</div>
+      <div>
+          <br>
+      </div>
+      <div>
+      <pre style="margin: 0px; font-size: 12px; font-style: normal; font-variant: normal;">
+          <div class="line" id="LC78" style="padding-left: 10px;">
+              <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;">### -- Primitive data types --------------------------------------------</span>
+          </div>
+          <div class="line" id="LC79" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Null      = </span>
+          <span class="nx">as-generator</span> <span class="kc" style="font-weight: bold;">null</span>
+      </div>
+          <div class="line" id="LC80" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Undefined = </span>
+          <span class="nx">as-generator</span> <span class="kc" style="font-weight: bold;">void</span>
+      </div>
+          <div class="line" id="LC81" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Bool      = </span>
+          <span class="nx">choice</span> <span class="kc" style="font-weight: bold;">true</span>
+          <span class="p">,</span> <span class="kc" style="font-weight: bold;">false</span>
+      </div>
+          <div class="line" id="LC82" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Num       = </span>
+          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'num'</span>  <span class="p">(</span>
+          <span class="nx">as-generator</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(s) -&gt;</span> <span class="nx">choose</span> <span class="o" style="font-weight: bold;">-</span>
+          <span class="nx">s</span>
+          <span class="p">,</span> <span class="nx">s</span>
+          <span class="p">)</span>
+      </div>
+          <div class="line" id="LC83" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Byte      = </span>
+          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'byte'</span> <span class="p">(</span>
+          <span class="nx">as-generator</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(_) -&gt;</span> <span class="k" style="font-weight: bold;">to</span>
+          <span class="o" style="font-weight: bold;">-</span>
+          <span class="nx">integer</span> <span class="p">(</span>
+          <span class="nx">choose</span> <span class="mi" style="color: rgb(0, 153, 153);">0</span>
+          <span class="p">,</span> <span class="mi" style="color: rgb(0, 153, 153);">255</span>
+          <span class="p">))</span>
+      </div>
+          <div class="line" id="LC84" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Char      = </span>
+          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'char'</span> <span class="p">(</span>
+          <span class="nx">transform</span> <span class="nx">char</span>
+          <span class="p">,</span> <span class="nx">Byte</span>
+          <span class="p">)</span>
+      </div>
+          <div class="line" id="LC85" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Str       = </span>
+          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'str'</span>  <span class="p">(</span>
+          <span class="nx">transform</span> <span class="nx">join</span>
+          <span class="p">,</span> <span class="p">(</span>
+          <span class="nx">repeat</span> <span class="nx">Char</span>
+          <span class="p">))</span>
+      </div>
+      </pre>
+      </div>
+      <div>
+      <span style="color: rgb(220, 220, 220); font-family: monospace; text-align: left; white-space: pre-wrap;"> </span>
+      <br>
+      </div>
+      </section>
+      <section>
+          <h2>String Generators</h2>
+      <div>
+          <br>
+      </div>
+      <div>
+      <pre style="margin: 0px; font-size: 12px; font-style: normal; font-variant: normal;">
+          <div class="line" id="LC96" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">NumChar      = </span>
+          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'num-char'</span> <span class="p">(</span>
+          <span class="nx">transform</span> <span class="nx">char</span>
+          <span class="p">,</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">-&gt;</span> <span class="nx">choose-int</span> <span class="mi" style="color: rgb(0, 153, 153);">48</span>
+          <span class="p">,</span> <span class="mi" style="color: rgb(0, 153, 153);">57</span>
+          <span class="p">)</span>
+      </div>
+          <div class="line" id="LC97" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">UpperChar    = </span>
+          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'upper-char'</span> <span class="p">(</span>
+          <span class="nx">transform</span> <span class="nx">char</span>
+          <span class="p">,</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">-&gt;</span> <span class="nx">choose-int</span> <span class="mi" style="color: rgb(0, 153, 153);">65</span>
+          <span class="p">,</span> <span class="mi" style="color: rgb(0, 153, 153);">90</span>
+          <span class="p">)</span>
+      </div>
+          <div class="line" id="LC98" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">LowerChar    = </span>
+          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'lower-char'</span> <span class="p">(</span>
+          <span class="nx">transform</span> <span class="nx">char</span>
+          <span class="p">,</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">-&gt;</span> <span class="nx">choose-int</span> <span class="mi" style="color: rgb(0, 153, 153);">97</span>
+          <span class="p">,</span> <span class="mi" style="color: rgb(0, 153, 153);">122</span>
+          <span class="p">)</span>
+      </div>
+          <div class="line" id="LC99" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">AlphaChar    = </span>
+          <span class="nx">frequency</span> <span class="p">[</span>
+          <span class="mi" style="color: rgb(0, 153, 153);">1</span>
+          <span class="p">,</span> <span class="nx">UpperChar</span>
+          <span class="p">],</span> <span class="p">[</span>
+          <span class="mi" style="color: rgb(0, 153, 153);">9</span>
+          <span class="p">,</span> <span class="nx">LowerChar</span>
+          <span class="p">]</span>
+      </div>
+          <div class="line" id="LC100" style="padding-left: 10px;">
+              <br>
+          </div>
+          <div class="line" id="LC105" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Id           = </span>
+          <span class="nx">do</span>
+      </div>
+          <div class="line" id="LC106" style="padding-left: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nv" style="color: rgb(0, 128, 128);">start = </span>
+          <span class="nx">frequency</span> <span class="p">[</span>
+          <span class="mi" style="color: rgb(0, 153, 153);">1</span>
+          <span class="p">,</span> <span class="s" style="color: rgb(221, 17, 68);">'_'</span>
+          <span class="p">],</span> <span class="p">[</span>
+          <span class="mi" style="color: rgb(0, 153, 153);">2</span>
+          <span class="p">,</span> <span class="s" style="color: rgb(221, 17, 68);">'$'</span>
+          <span class="p">],</span> <span class="p">[</span>
+          <span class="mi" style="color: rgb(0, 153, 153);">9</span>
+          <span class="p">,</span> <span class="nx">AlphaChar</span>
+          <span class="p">]</span>
+      </div>
+          <div class="line" id="LC107" style="padding-left: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nv" style="color: rgb(0, 128, 128);">chars = </span>
+          <span class="nx">frequency</span> <span class="p">[</span>
+          <span class="mi" style="color: rgb(0, 153, 153);">1</span>
+          <span class="p">,</span> <span class="nx">NumChar</span>
+          <span class="p">],</span> <span class="p">[</span>
+          <span class="mi" style="color: rgb(0, 153, 153);">9</span>
+          <span class="p">,</span> <span class="nx">start</span>
+          <span class="p">]</span>
+      </div>
+          <div class="line" id="LC108" style="padding-left: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nv" style="color: rgb(0, 128, 128);">rest  = </span>
+          <span class="nx">transform</span> <span class="nx">join</span>
+          <span class="p">,</span> <span class="p">(</span>
+          <span class="nx">repeat</span> <span class="nx">chars</span>
+          <span class="p">)</span>
+      </div>
+          <div class="line" id="LC109" style="padding-left: 10px;">
+              <br>
+          </div>
+          <div class="line" id="LC110" style="padding-left: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'id'</span> <span class="p">(</span>
+          <span class="nx">transform</span> <span class="nx">join</span>
+          <span class="p">,</span> <span class="p">(</span>
+          <span class="nx">sequence</span> <span class="nx">start</span>
+          <span class="p">,</span> <span class="nx">rest</span>
+          <span class="p">))</span>
+      </div>
+          <div>
+              <span class="p">
+                  <br>
+              </span>
+          </div>
+      </pre>
+      </div>
+      </section>
+      <section>
+          <h2>Container Type Generators</h2>
+      <div>
+          <br>
+      </div>
+      <div>
+      <pre style="margin: 0px; font-size: 12px; font-style: normal; font-variant: normal;">
+          <div class="line" id="LC113" style="padding-left: 10px;">
+              <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;">### -- Container data types --------------------------------------------</span>
+          </div>
+          <div class="line" id="LC114" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">List = </span>
+          <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(...as) -&gt;</span> <span class="nx">repeat</span> <span class="p">(</span>
+          <span class="nx">choice</span> <span class="p">...</span>
+          <span class="nx">as</span>
+          <span class="p">)</span>
+      </div>
+          <div class="line" id="LC115" style="padding-left: 10px;">
+      <span class="nv" style="color: rgb(0, 128, 128);">Map  = </span>
+          <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(...as) -&gt;</span> <span class="nx">transform</span> <span class="k" style="font-weight: bold;">to</span>
+          <span class="o" style="font-weight: bold;">-</span>
+          <span class="nx">object</span>
+          <span class="p">,</span> <span class="p">(</span>
+          <span class="nx">repeat</span> <span class="p">(</span>
+          <span class="nx">sequence</span> <span class="nx">Id</span>
+          <span class="p">,</span> <span class="p">(</span>
+          <span class="nx">choice</span> <span class="p">...</span>
+          <span class="nx">as</span>
+          <span class="p">)))</span>
+      </div>
+          <div class="line" id="LC116" style="padding-left: 10px;">
+              <br>
+          </div>
+          <div class="line" id="LC116" style="padding-left: 10px;">
+              <pre style="margin: 0px; font-size: 12px; font-style: normal; font-variant: normal;">
+                  <div class="line" id="LC70" style="padding-left: 10px;">
+                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;">#### λ to-object</span>
+                  </div>
+                  <div class="line" id="LC71" style="padding-left: 10px;">
+                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;"># :internal:</span>
+                  </div>
+                  <div class="line" id="LC72" style="padding-left: 10px;">
+                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;"># Folds a list of pairs into an object.</span>
+                  </div>
+                  <div class="line" id="LC73" style="padding-left: 10px;">
+                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;">#</span>
+                  </div>
+                  <div class="line" id="LC74" style="padding-left: 10px;">
+                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;"># :: [String, a] -&gt; { String -&gt; a }</span>
+                  </div>
+                  <div class="line" id="LC75" style="padding-left: 10px;">
+      <span class="k" style="font-weight: bold;">to</span>
+                  <span class="o" style="font-weight: bold;">-</span>
+                  <span class="nv" style="color: rgb(0, 128, 128);">object = </span>
+                  <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(as) -&gt;</span> <span class="nx">as</span>
+                  <span class="p">.</span>
+                  <span class="nx">reduce</span> <span class="p">(</span>
+                  <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(r, [k,v]) -&gt;</span> <span class="nx">r</span> <span class="o" style="font-weight: bold;">&lt;&lt;&lt;</span> <span class="p">{</span> <span class="s" style="color: rgb(221, 17, 68);">"#k"</span>
+                  <span class="o" style="font-weight: bold;">:</span> <span class="nx">v</span> <span class="p">}),</span> <span class="p">{}</span>
+      </div>
+              </pre>
+          </div>
+      </pre>
+      </div>
+      </section>
+      <section>
+          <h2>What's in the Future?</h2>
+          <div>
+              <br>
+          </div>
+          <div>
+              <br>
+          </div>
+          <div>
+              <ol>
+                  <li>Shrinking of counterexamples.</li>
+                  <li>Generators based on generic lazy linked lists</li>
+                  <li>Asynchronous tests</li>
+              </ol>
+          </div>
+      </section>
+      </div>
+            
 
-				<section id="transitions">
-					<h2>Transition Styles</h2>
-					<p>
-						You can select from different transitions, like: <br>
-						<a href="?transition=cube#/transitions">Cube</a> -
-						<a href="?transition=page#/transitions">Page</a> -
-						<a href="?transition=concave#/transitions">Concave</a> -
-						<a href="?transition=zoom#/transitions">Zoom</a> -
-						<a href="?transition=linear#/transitions">Linear</a> -
-						<a href="?transition=fade#/transitions">Fade</a> -
-						<a href="?transition=none#/transitions">None</a> -
-						<a href="?#/transitions">Default</a>
-					</p>
-				</section>
-
-				<section id="themes">
-					<h2>Themes</h2>
-					<p>
-						Reveal.js comes with a few themes built in: <br>
-						<a href="?theme=sky#/themes">Sky</a> -
-						<a href="?theme=beige#/themes">Beige</a> -
-						<a href="?theme=simple#/themes">Simple</a> -
-						<a href="?theme=serif#/themes">Serif</a> -
-						<a href="?theme=night#/themes">Night</a> -
-						<a href="?#/themes">Default</a>
-					</p>
-					<p>
-						<small>
-							* Theme demos are loaded after the presentation which leads to flicker. In production you should load your theme in the <code>&lt;head&gt;</code> using a <code>&lt;link&gt;</code>.
-						</small>
-					</p>
-				</section>
-
-				<section>
-					<section data-state="alert">
-						<h2>Global State</h2>
-						<p>
-							Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-							will be added as a class to the document element when the slide is open. This lets you
-							apply broader style changes, like switching the background.
-						</p>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section data-state="blackout">
-						<h2>"blackout"</h2>
-						<a href="#" class="image navigate-down">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-						</a>
-					</section>
-					<section data-state="soothe">
-						<h2>"soothe"</h2>
-						<a href="#" class="image navigate-next">
-							<img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Up arrow" style="-webkit-transform: rotate(-90deg);">
-						</a>
-					</section>
-				</section>
-
-				<section data-state="customevent">
-					<h2>Custom Events</h2>
-					<p>
-						Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
-					</p>
-					<pre><code data-trim contenteditable style="font-size: 18px; margin-top: 20px;">
-Reveal.addEventListener( 'customevent', function() {
-	console.log( '"customevent" has fired' );
-} );
-					</code></pre>
-				</section>
-
-				<section>
-					<h2>Clever Quotes</h2>
-					<p>
-						These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
-					</p>
-					<blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-						&ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
-						reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-					</blockquote>
-				</section>
-
-				<section>
-					<h2>Pretty Code</h2>
-					<pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
-
-    var nodes = document.querySelectorAll( selector );
-
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-
-      if( !node.className ) ) {
-        node.className += ' roll';
-      }
-    };
-  }
-}
-					</code></pre>
-					<p>Courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-				</section>
-
-				<section>
-					<h2>Intergalactic Interconnections</h2>
-					<p>
-						You can link between slides internally,
-						<a href="#/2/3">like this</a>.
-					</p>
-				</section>
-
-				<section>
-					<section>
-						<h2>Fragmented Views</h2>
-						<p>Hit the next arrow...</p>
-						<p class="fragment">... to step through ...</p>
-						<ol>
-							<li class="fragment"><code>any type</code></li>
-							<li class="fragment"><em>of view</em></li>
-							<li class="fragment"><strong>fragments</strong></li>
-						</ol>
-
-						<aside class="notes">
-							This slide has fragments which are also stepped through in the notes window.
-						</aside>
-					</section>
-					<section>
-						<h2>Fragment Styles</h2>
-						<p>There's a few styles of fragments, like:</p>
-						<p class="fragment grow">grow</p>
-						<p class="fragment shrink">shrink</p>
-						<p class="fragment roll-in">roll-in</p>
-						<p class="fragment fade-out">fade-out</p>
-						<p class="fragment highlight-red">highlight-red</p>
-						<p class="fragment highlight-green">highlight-green</p>
-						<p class="fragment highlight-blue">highlight-blue</p>
-					</section>
-				</section>
-
-				<section>
-					<h2>Spectacular image!</h2>
-					<a class="image" href="http://lab.hakim.se/meny/" target="_blank">
-						<img width="320" height="299" src="http://s3.amazonaws.com/hakim-static/portfolio/images/meny.png" alt="Meny">
-					</a>
-				</section>
-
-				<section>
-					<h2>Export to PDF</h2>
-					<p>Presentations can be <a href="https://github.com/hakimel/reveal.js#pdf-export">exported to PDF</a>, below is an example that's been uploaded to SlideShare.</p>
-					<iframe id="slideshare" src="http://www.slideshare.net/slideshow/embed_code/13872948" width="455" height="356" style="margin:0;overflow:hidden;border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe>
-					<script>
-						document.getElementById('slideshare').attributeName = 'allowfullscreen';
-					</script>
-				</section>
-
-				<section>
-					<h2>Take a Moment</h2>
-					<p>
-						Press b or period on your keyboard to enter the 'paused' mode. This mode is helpful when you want to take distracting slides off the screen
-						during a presentation.
-					</p>
-				</section>
-
-				<section>
-					<h2>Stellar Links</h2>
-					<ul>
-						<li><a href="http://slid.es">Try the online editor</a></li>
-						<li><a href="https://github.com/hakimel/reveal.js">Source code on GitHub</a></li>
-						<li><a href="http://twitter.com/hakimel">Follow me on Twitter</a></li>
-					</ul>
-				</section>
-
-				<section>
-					<h1>THE END</h1>
-					<h3>BY Hakim El Hattab / hakim.se</h3>
-				</section>
-
-			</div>
 
 		</div>
 
