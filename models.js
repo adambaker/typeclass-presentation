@@ -1,4 +1,5 @@
 var bb = require('backbone');
+var _  = require('underscore');
 
 var App = {
   Models: {
@@ -10,6 +11,18 @@ var App = {
     })
     ,EndOfUnit: bb.Model.extend({
       copy: function(){ return new App.Models.EndOfUnit(this.attributes) }
+    })
+    ,Unit: bb.Model.extend({
+      copy: function(){
+        return new App.Models.Unit(_.extend({
+        }, this.attributes))
+      }
+    })
+    ,Class: bb.Model.extend({
+      copy: function(){
+        return new App.Models.Class(_.extend({
+        }, this.attributes))
+      }
     })
   }
 }
