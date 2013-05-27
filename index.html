@@ -38,9 +38,20 @@
       <div class="slides">
         <section>
           <h1>Functional Programming's Relentless Bug Hunter: Claire</h1>
+          <br>
           <div>Adam Baker</div>
           <div>adam@dobetter.com</div>
         </section>
+
+        <section>
+          <h2>Property Based Testing</h2>
+          <br>
+          <div>You may have heard of this from libraries such as QuickCheck and ScalaCheck
+          </div>
+          <br>
+          <div>Claire helps you test invariants in your javascript</div>
+        </section>
+
         <section>
           <h2>Invariants!</h2>
           <br>
@@ -149,283 +160,110 @@ commutativity() //passes silently
         <br><br>
         <div class='fragment'>Let's see some code</div>
       </section>
-      <section>
-          <h2>Properties of Addition and Multiplication</h2>
-      <div>
-          <ul>
-      <li>associativity: (a+b)+c = a+(b+c)</li>
-              <li>commutativity: a+b = b+a</li>
-              <li>identity: a+0 = a</li>
-              <li>closure:&nbsp;∀a,b&nbsp;∈ ℤ. (a+b) ∈ ℤ</li>
-          </ul>
-      <div style="text-align: left;">
-          <br>
-      </div>
-      <div style="text-align: center;">Test with Int, Num, and BigInt</div>
-      <div style="text-align: center;">for both addition and multiplication</div>
-      <div style="text-align: center;">
-      <br>
-      </div>
-      <div style="text-align: center;">Which ones fail?</div>
-      </div>
-      </section>
-      <section>
-          <h2>Properties of Addition and Multiplication</h2>
-      <div>
-          <br>
-      </div>
-      <div>Two failures:</div>
-      <div>
-      <br>
-      </div>
-      <div>Num fails associativity of multiplication&nbsp;</div>
-      <div>BigInt fails associativity of addition</div>
-      <div>
-      <br>
-      </div>
-      <div>Why?</div>
-      </section>
-      <section>
-          <h2>A Look Inside</h2>
-      <div>Some basic generators:</div>
-      <div>
-          <br>
-      </div>
-      <div>
-      <pre style="margin: 0px; font-size: 12px; font-style: normal; font-variant: normal;">
-          <div class="line" id="LC78" style="padding-left: 10px;">
-              <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;">### -- Primitive data types --------------------------------------------</span>
-          </div>
-          <div class="line" id="LC79" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Null      = </span>
-          <span class="nx">as-generator</span> <span class="kc" style="font-weight: bold;">null</span>
-      </div>
-          <div class="line" id="LC80" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Undefined = </span>
-          <span class="nx">as-generator</span> <span class="kc" style="font-weight: bold;">void</span>
-      </div>
-          <div class="line" id="LC81" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Bool      = </span>
-          <span class="nx">choice</span> <span class="kc" style="font-weight: bold;">true</span>
-          <span class="p">,</span> <span class="kc" style="font-weight: bold;">false</span>
-      </div>
-          <div class="line" id="LC82" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Num       = </span>
-          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'num'</span>  <span class="p">(</span>
-          <span class="nx">as-generator</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(s) -&gt;</span> <span class="nx">choose</span> <span class="o" style="font-weight: bold;">-</span>
-          <span class="nx">s</span>
-          <span class="p">,</span> <span class="nx">s</span>
-          <span class="p">)</span>
-      </div>
-          <div class="line" id="LC83" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Byte      = </span>
-          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'byte'</span> <span class="p">(</span>
-          <span class="nx">as-generator</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(_) -&gt;</span> <span class="k" style="font-weight: bold;">to</span>
-          <span class="o" style="font-weight: bold;">-</span>
-          <span class="nx">integer</span> <span class="p">(</span>
-          <span class="nx">choose</span> <span class="mi" style="color: rgb(0, 153, 153);">0</span>
-          <span class="p">,</span> <span class="mi" style="color: rgb(0, 153, 153);">255</span>
-          <span class="p">))</span>
-      </div>
-          <div class="line" id="LC84" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Char      = </span>
-          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'char'</span> <span class="p">(</span>
-          <span class="nx">transform</span> <span class="nx">char</span>
-          <span class="p">,</span> <span class="nx">Byte</span>
-          <span class="p">)</span>
-      </div>
-          <div class="line" id="LC85" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Str       = </span>
-          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'str'</span>  <span class="p">(</span>
-          <span class="nx">transform</span> <span class="nx">join</span>
-          <span class="p">,</span> <span class="p">(</span>
-          <span class="nx">repeat</span> <span class="nx">Char</span>
-          <span class="p">))</span>
-      </div>
-      </pre>
-      </div>
-      <div>
-      <span style="color: rgb(220, 220, 220); font-family: monospace; text-align: left; white-space: pre-wrap;"> </span>
-      <br>
-      </div>
-      </section>
-      <section>
-          <h2>String Generators</h2>
-      <div>
-          <br>
-      </div>
-      <div>
-      <pre style="margin: 0px; font-size: 12px; font-style: normal; font-variant: normal;">
-          <div class="line" id="LC96" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">NumChar      = </span>
-          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'num-char'</span> <span class="p">(</span>
-          <span class="nx">transform</span> <span class="nx">char</span>
-          <span class="p">,</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">-&gt;</span> <span class="nx">choose-int</span> <span class="mi" style="color: rgb(0, 153, 153);">48</span>
-          <span class="p">,</span> <span class="mi" style="color: rgb(0, 153, 153);">57</span>
-          <span class="p">)</span>
-      </div>
-          <div class="line" id="LC97" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">UpperChar    = </span>
-          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'upper-char'</span> <span class="p">(</span>
-          <span class="nx">transform</span> <span class="nx">char</span>
-          <span class="p">,</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">-&gt;</span> <span class="nx">choose-int</span> <span class="mi" style="color: rgb(0, 153, 153);">65</span>
-          <span class="p">,</span> <span class="mi" style="color: rgb(0, 153, 153);">90</span>
-          <span class="p">)</span>
-      </div>
-          <div class="line" id="LC98" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">LowerChar    = </span>
-          <span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'lower-char'</span> <span class="p">(</span>
-          <span class="nx">transform</span> <span class="nx">char</span>
-          <span class="p">,</span> <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">-&gt;</span> <span class="nx">choose-int</span> <span class="mi" style="color: rgb(0, 153, 153);">97</span>
-          <span class="p">,</span> <span class="mi" style="color: rgb(0, 153, 153);">122</span>
-          <span class="p">)</span>
-      </div>
-          <div class="line" id="LC99" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">AlphaChar    = </span>
-          <span class="nx">frequency</span> <span class="p">[</span>
-          <span class="mi" style="color: rgb(0, 153, 153);">1</span>
-          <span class="p">,</span> <span class="nx">UpperChar</span>
-          <span class="p">],</span> <span class="p">[</span>
-          <span class="mi" style="color: rgb(0, 153, 153);">9</span>
-          <span class="p">,</span> <span class="nx">LowerChar</span>
-          <span class="p">]</span>
-      </div>
-          <div class="line" id="LC100" style="padding-left: 10px;">
-              <br>
-          </div>
-          <div class="line" id="LC105" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Id           = </span>
-          <span class="nx">do</span>
-      </div>
-          <div class="line" id="LC106" style="padding-left: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nv" style="color: rgb(0, 128, 128);">start = </span>
-          <span class="nx">frequency</span> <span class="p">[</span>
-          <span class="mi" style="color: rgb(0, 153, 153);">1</span>
-          <span class="p">,</span> <span class="s" style="color: rgb(221, 17, 68);">'_'</span>
-          <span class="p">],</span> <span class="p">[</span>
-          <span class="mi" style="color: rgb(0, 153, 153);">2</span>
-          <span class="p">,</span> <span class="s" style="color: rgb(221, 17, 68);">'$'</span>
-          <span class="p">],</span> <span class="p">[</span>
-          <span class="mi" style="color: rgb(0, 153, 153);">9</span>
-          <span class="p">,</span> <span class="nx">AlphaChar</span>
-          <span class="p">]</span>
-      </div>
-          <div class="line" id="LC107" style="padding-left: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nv" style="color: rgb(0, 128, 128);">chars = </span>
-          <span class="nx">frequency</span> <span class="p">[</span>
-          <span class="mi" style="color: rgb(0, 153, 153);">1</span>
-          <span class="p">,</span> <span class="nx">NumChar</span>
-          <span class="p">],</span> <span class="p">[</span>
-          <span class="mi" style="color: rgb(0, 153, 153);">9</span>
-          <span class="p">,</span> <span class="nx">start</span>
-          <span class="p">]</span>
-      </div>
-          <div class="line" id="LC108" style="padding-left: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nv" style="color: rgb(0, 128, 128);">rest  = </span>
-          <span class="nx">transform</span> <span class="nx">join</span>
-          <span class="p">,</span> <span class="p">(</span>
-          <span class="nx">repeat</span> <span class="nx">chars</span>
-          <span class="p">)</span>
-      </div>
-          <div class="line" id="LC109" style="padding-left: 10px;">
-              <br>
-          </div>
-          <div class="line" id="LC110" style="padding-left: 10px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="nx">label</span> <span class="s" style="color: rgb(221, 17, 68);">'id'</span> <span class="p">(</span>
-          <span class="nx">transform</span> <span class="nx">join</span>
-          <span class="p">,</span> <span class="p">(</span>
-          <span class="nx">sequence</span> <span class="nx">start</span>
-          <span class="p">,</span> <span class="nx">rest</span>
-          <span class="p">))</span>
-      </div>
-          <div>
-              <span class="p">
-                  <br>
-              </span>
-          </div>
-      </pre>
-      </div>
-      </section>
-      <section>
-          <h2>Container Type Generators</h2>
-      <div>
-          <br>
-      </div>
-      <div>
-      <pre style="margin: 0px; font-size: 12px; font-style: normal; font-variant: normal;">
-          <div class="line" id="LC113" style="padding-left: 10px;">
-              <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;">### -- Container data types --------------------------------------------</span>
-          </div>
-          <div class="line" id="LC114" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">List = </span>
-          <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(...as) -&gt;</span> <span class="nx">repeat</span> <span class="p">(</span>
-          <span class="nx">choice</span> <span class="p">...</span>
-          <span class="nx">as</span>
-          <span class="p">)</span>
-      </div>
-          <div class="line" id="LC115" style="padding-left: 10px;">
-      <span class="nv" style="color: rgb(0, 128, 128);">Map  = </span>
-          <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(...as) -&gt;</span> <span class="nx">transform</span> <span class="k" style="font-weight: bold;">to</span>
-          <span class="o" style="font-weight: bold;">-</span>
-          <span class="nx">object</span>
-          <span class="p">,</span> <span class="p">(</span>
-          <span class="nx">repeat</span> <span class="p">(</span>
-          <span class="nx">sequence</span> <span class="nx">Id</span>
-          <span class="p">,</span> <span class="p">(</span>
-          <span class="nx">choice</span> <span class="p">...</span>
-          <span class="nx">as</span>
-          <span class="p">)))</span>
-      </div>
-          <div class="line" id="LC116" style="padding-left: 10px;">
-              <br>
-          </div>
-          <div class="line" id="LC116" style="padding-left: 10px;">
-              <pre style="margin: 0px; font-size: 12px; font-style: normal; font-variant: normal;">
-                  <div class="line" id="LC70" style="padding-left: 10px;">
-                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;">#### λ to-object</span>
-                  </div>
-                  <div class="line" id="LC71" style="padding-left: 10px;">
-                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;"># :internal:</span>
-                  </div>
-                  <div class="line" id="LC72" style="padding-left: 10px;">
-                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;"># Folds a list of pairs into an object.</span>
-                  </div>
-                  <div class="line" id="LC73" style="padding-left: 10px;">
-                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;">#</span>
-                  </div>
-                  <div class="line" id="LC74" style="padding-left: 10px;">
-                      <span class="c1" style="color: rgb(153, 153, 136); font-style: italic;"># :: [String, a] -&gt; { String -&gt; a }</span>
-                  </div>
-                  <div class="line" id="LC75" style="padding-left: 10px;">
-      <span class="k" style="font-weight: bold;">to</span>
-                  <span class="o" style="font-weight: bold;">-</span>
-                  <span class="nv" style="color: rgb(0, 128, 128);">object = </span>
-                  <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(as) -&gt;</span> <span class="nx">as</span>
-                  <span class="p">.</span>
-                  <span class="nx">reduce</span> <span class="p">(</span>
-                  <span class="nf" style="color: rgb(153, 0, 0); font-weight: bold;">(r, [k,v]) -&gt;</span> <span class="nx">r</span> <span class="o" style="font-weight: bold;">&lt;&lt;&lt;</span> <span class="p">{</span> <span class="s" style="color: rgb(221, 17, 68);">"#k"</span>
-                  <span class="o" style="font-weight: bold;">:</span> <span class="nx">v</span> <span class="p">}),</span> <span class="p">{}</span>
-      </div>
-              </pre>
-          </div>
-      </pre>
-      </div>
-      </section>
-      <section>
-          <h2>What's in the Future?</h2>
-          <div>
-              <br>
-          </div>
-          <div>
-              <br>
-          </div>
-          <div>
-              <ol>
-                  <li>Shrinking of counterexamples.</li>
-                  <li>Generators based on generic lazy linked lists</li>
-                  <li>Asynchronous tests</li>
-              </ol>
-          </div>
-      </section>
-      </div>
-            
 
+      <section>
+        <h2>Properties of Addition and Multiplication</h2>
+        <div>
+          <ul>
+            <li>associativity: (a+b)+c = a+(b+c)</li>
+            <li>commutativity: a+b = b+a</li>
+            <li>identity: a+0 = a</li>
+            <li>closure: ∀ a,b ∈ ℤ. (a+b) ∈ ℤ</li>
+          </ul>
+          <br><br>
+          <div class='fragment'>Test with Int, Num, and BigInt<br>
+          for both addition and multiplication</div>
+          <br>
+          <div class='fragment'>Which ones fail?</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Properties of Addition and Multiplication</h2>
+        <br>
+        <div>Two failures:</div>
+        <br>
+        <div class='fragment'>Num fails associativity of multiplication</div>
+        <div class='fragment'>BigInt fails associativity of addition</div>
+        <br>
+        <div class='fragment'>Why?</div>
+      </section>
+
+      <section>
+        <h2>A Look Inside</h2>
+        <div>Some basic generators:</div>
+        <br>
+        <pre><code>
+char = String.from-char-code
+
+### -- Primitive data types --------------------------------------------
+Null      = as-generator null
+Undefined = as-generator void
+Bool      = choice true, false
+Num       = label 'num'  ((s) -> choose -s, s)
+Byte      = label 'byte' ((_) -> to-integer (choose 0, 255))
+Char      = label 'char' (transform char, Byte)
+Str       = label 'str'  (transform join, (repeat Char))
+        </code></pre>
+      </section>
+      <section>
+        <h2>String Generators</h2>
+        <br>
+        <pre><code>
+### -- Specialised textual types ---------------------------------------
+NumChar      = transform char, -> choose-int 48, 57
+UpperChar    = transform char, -> choose-int 65, 90
+LowerChar    = transform char, -> choose-int 97, 122
+AlphaChar    = frequency [1, UpperChar], [9, LowerChar]
+AlphaNumChar = frequency [1, NumChar], [9, AlphaChar]
+AlphaStr     = transform join, (repeat AlphaChar)
+NumStr       = transform join, (repeat NumChar)
+AlphaNumStr  = transform join, (repeat AlphaNumChar)
+
+Id           = do
+               start = frequency [1, '_'], [2, '$'], [9, AlphaChar]
+               chars = frequency [1, NumChar], [9, start]
+               rest  = transform join, (repeat chars)
+
+               label 'id' (transform join, (sequence start, rest))
+        </code></pre>
+      </section>
+
+      <section>
+        <h2>Container Type Generators</h2>
+        <br>
+      <pre><code>
+### -- Container data types -------------------------------
+List = (...as) -> repeat (choice ...as)
+Map  = (...as) -> transform to-object, (
+                    repeat (sequence Id, (choice ...as))
+                  )
+
+#### λ to-object
+# :internal:
+# Folds a list of pairs into an object.
+#
+# :: [String, a] -> { String -> a }
+to-object = (as) -> as.reduce ((r, [k,v]) -> r <<< { "#k": v }), {}
+
+      </code></pre>
+      </section>
+
+      <section>
+        <h2>What's in the Future?</h2>
+        <br><br>
+        <div>
+          <ol>
+            <li>Shrinking of counterexamples.</li>
+            <li class='fragment'>Generators based on generic lazy linked lists</li>
+            <li class='fragment'>Asynchronous tests</li>
+          </ol>
+        </div>
+      </section>
+
+      <section>
+        <h2>Thanks</h2>
+      </div>
 
 		</div>
 
