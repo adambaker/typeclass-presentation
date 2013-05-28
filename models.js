@@ -15,6 +15,7 @@ var App = {
     ,Unit: bb.Model.extend({
       copy: function(){
         return new App.Models.Unit(_.extend({}, this.attributes, {
+          items: this.get('items').map(function(i){return i.copy()})
         }))
       }
     })

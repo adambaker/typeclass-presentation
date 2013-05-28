@@ -56,25 +56,7 @@ var Class = classObjGen('Class', {
   units: gens.resize(7, ArrayGen(Unit))
 });
 
-var distinct = function(obj, copy) {
-  return copy && copy !== obj && copy.cid !== obj.cid;
-};
-var sameClass = function(obj, copy) {
-  return copy.className === obj.className && copy instanceof obj.constructor;
-};
-var withCopy = function(f){return function(obj){return f(obj, obj.copy())}};
-
-describe('Item copy', function() {
-  it('is distinct from the original', forAll(Item).satisfy(withCopy(distinct)).asTest());
-  it('is the same class as original', forAll(Item).satisfy(withCopy(sameClass)).asTest());
-  it('has the same attrs as the original', forAll(Item).satisfy(function(item) {
-    return _.isEqual(item.copy().attributes, item.attributes);
-  }).asTest());
-});
-
 describe('Unit copy', function() {
-  it('is distinct from the original', forAll(Unit).satisfy(withCopy(distinct)).asTest());
-  it('is the same class as original', forAll(Unit).satisfy(withCopy(sameClass)).asTest());
   it('has no releaseJobId and the same offset', forAll(Unit).satisfy(function(unit) {
     var copy = unit.copy()
     assert.isUndefined(copy.get('releaseJobId'))
@@ -86,29 +68,7 @@ describe('Unit copy', function() {
 
     copyItems = unit.copy().get('items');
     unitItems = unit.get('items');
-    return _.all(_.zip(copyItems, unit.get('items')), function(itemPairs) {
-      return distinct(itemPairs[0], itemPairs[1]) && sameClass(itemPairs[0], itemPairs[1]);
-    }) && _.isEqual(_.pluck(copyItems, 'attributes'), _.pluck(unitItems, 'attributes'));
-  }).asTest());
-});
-
-describe('Class copy', function() {
-  it('is distinct from the original with same class', forAll(Class).satisfy(function(cls){
-    return withCopy(distinct)(cls) && withCopy(sameClass)(cls)
-  }).asTest());
-
-  it('has undefined startDate', forAll(Class).satisfy(function(cls) {
-    var copy = cls.copy()
-    return copy.startDate === undefined;
-  }).asTest());
-
-  it('has copies of the units in the unit array', forAll(Class).satisfy(function(cls) {
-    var copy = cls.copy()
-    var copyUnits = copy.get('units');
-    var clsUnits = cls.get('units');
-    return _.all(_.zip(copyUnits, clsUnits), function(uPairs) {
-      return distinct.apply(null, uPairs) && sameClass.apply(null, uPairs);
-    });
+    return _.isEqual(_.pluck(copyItems, 'attributes'), _.pluck(unitItems, 'attributes'));
   }).asTest());
 });
 
