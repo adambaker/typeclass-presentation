@@ -22,7 +22,10 @@
     "mustache": "~0.4.0",
     "socket.io": "~0.9.13",
     "claire": "~0.3.4",
-    "prelude-ls": "~1.0.0"
+    "prelude-ls": "~1.0.0",
+    "moment": "~2.0.0",
+    "backbone": "~1.0.0",
+    "chai": "~1.6.0"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.2.0",
