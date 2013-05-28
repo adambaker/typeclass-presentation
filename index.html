@@ -156,7 +156,6 @@ commutativity() //passes silently
           <li class='fragment'>Must copy it's own attributes, except it's start date.
           <li class='fragment'>Must copy each unit's attributes, except for release job
           <li class='fragment'>Each item in a unit must be cloned.
-          <li class='fragment'>Non-Model attributes can be aliased, but Model attributes must not be
         </ul>
         <br><br>
         <div class='fragment'>Let's see some code</div>
@@ -212,14 +211,9 @@ Str       = label 'str'  (transform join, (repeat Char))
         <br>
         <pre><code>
 ### -- Specialised textual types ---------------------------------------
-NumChar      = transform char, -> choose-int 48, 57
-UpperChar    = transform char, -> choose-int 65, 90
 LowerChar    = transform char, -> choose-int 97, 122
 AlphaChar    = frequency [1, UpperChar], [9, LowerChar]
-AlphaNumChar = frequency [1, NumChar], [9, AlphaChar]
 AlphaStr     = transform join, (repeat AlphaChar)
-NumStr       = transform join, (repeat NumChar)
-AlphaNumStr  = transform join, (repeat AlphaNumChar)
 
 Id           = do
                start = frequency [1, '_'], [2, '$'], [9, AlphaChar]
@@ -277,6 +271,7 @@ to-object = (as) -> as.reduce ((r, [k,v]) -> r <<< { "#k": v }), {}
           <li class='fragment'>XUnit testing automates test running.
           <li class='fragment'>Propery based testing automates test generation.
           <li class='fragment'>Shrinking will help automate the first step in debugging.
+          <li class='fragment'>Your confidence grows each time you run your test suite.
         </ul>
       </section>
 
