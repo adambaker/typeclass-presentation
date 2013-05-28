@@ -173,17 +173,13 @@ commutativity() //passes silently
   info: gens.resize(5, ObjectGen(Any))
 });
 
-var EndOfUnit = classObjGen('EndOfUnit', {});
-
 var Video = classObjGen('Video', {
   youTubeId: claire.frequency([1, Nothing], [9, Id])
 });
 
-var Item = claire.label('Item', claire.choice(SpecialItem, EndOfUnit, Video));
+var Item = claire.label('Item', claire.choice(SpecialItem, Video));
 
 var Unit = classObjGen('Unit', {
-  releaseJobId: claire.choice(Nothing, AlphaStr),
-  releaseOffset: gens.resize(40, PosInt),
   items: gens.resize(6, ArrayGen(Item))
 });
         </code></pre>
@@ -214,7 +210,8 @@ var Unit = classObjGen('Unit', {
         <div class='fragment'>Num fails associativity of multiplication</div>
         <div class='fragment'>BigInt fails associativity of addition</div>
         <br>
-        <div class='fragment'>Why?</div>
+        <div class='fragment'>The Point: Claire makes it easy to test boundary conditions
+        and find corner cases.</div>
       </section>
 
       <section>

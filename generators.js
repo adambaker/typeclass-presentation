@@ -22,6 +22,7 @@ module.exports = _.extend({
   ,resize: resize
   ,posIntOf: posIntOf
   ,yes: function(){return true}
+  ,id: function(x){return x}
 }, gens)
 
 function posIntOf(n) {
