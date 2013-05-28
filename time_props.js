@@ -17,7 +17,7 @@ Time = claire.label('time')(claire.transform(function(hm) {
   return { hours: hm[0], minutes: hm[1] };
 }, claire.sequence(posIntOf(24), posIntOf(60))));
 
-Moment = claire.label('moment', claire.transform(moment, posIntOf(2000000000000)));
+Moment = claire.label('moment', claire.transform(moment.unix, posIntOf(2000000000)));
 
 
 describe('toMomentAfter', function() {
