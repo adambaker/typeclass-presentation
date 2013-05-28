@@ -251,6 +251,13 @@ to-object = (as) -> as.reduce ((r, [k,v]) -> r <<< { "#k": v }), {}
       </section>
 
       <section>
+        <h2>For the FP geeks</h2>
+        Claire's generators are monads: <br><br>
+        <code>claire.transform</code> acts as <code>fmap</code><br>
+        <code>.then</code> method on generators acts as monadic bind
+      </section>
+
+      <section>
         <h2>What's in the Future?</h2>
         <br><br>
         <div>
@@ -263,6 +270,17 @@ to-object = (as) -> as.reduce ((r, [k,v]) -> r <<< { "#k": v }), {}
       </section>
 
       <section>
+        <h2>Why is this important?</h2>
+        <br>
+        <ul>
+          <li>Automated teting is important.
+          <li class='fragment'>XUnit testing automates test running.
+          <li class='fragment'>Propery based testing automates test generation.
+          <li class='fragment'>Shrinking will help automate the first step in debugging.
+        </ul>
+      </section>
+
+      <section>
         <h2>Thanks</h2>
         <br>
         <div>install:</div>
@@ -270,6 +288,11 @@ to-object = (as) -> as.reduce ((r, [k,v]) -> r <<< { "#k": v }), {}
         <br><br>
         <div>github:</div>
         <a href="https://github.com/killdream/claire">https://github.com/killdream/claire</a>
+        <br><br>
+        <a href="http://www.youtube.com/watch?v=XgasxJWgZBM">
+          Functional Programming: A Secret Weapon for Software Testing
+        </a><br>
+        a talk on QuickCheck by John Hughes.
       </section>
 
 		</div>
