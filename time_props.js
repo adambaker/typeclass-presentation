@@ -1,6 +1,7 @@
 var Moment, PosInt, Time, claire, sized, toMomentAfter;
 
 var moment = require('moment');
+var assert = require('chai').assert;
 
 var claire = require('claire');
 
@@ -22,7 +23,9 @@ Moment = claire.label('moment', claire.transform(moment, posIntOf(2000000000000)
 describe('toMomentAfter', function() {
   it('has the right hours and minutes', claire.forAll(Time, Moment).satisfy(function(t, m) {
     var mo = toMomentAfter(t, m);
-    return mo.hours() === t.hours && mo.minutes() === t.minutes;
+    assert.equal(mo.hours(), t.hours);
+    assert.equal(mo.minutes(), t.minutes);
+    return true;
   }).asTest());
 
   it('is after the provided moment', claire.forAll(Time, Moment).satisfy(function(t, m) {

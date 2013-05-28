@@ -153,10 +153,10 @@ commutativity() //passes silently
   return claire.label(className)(function() {
     var attr, attrs, gen;
 
-    attrs = { name: value(AlphaStr) };
+    attrs = {};
     for (attr in attrGens) {
       gen = attrGens[attr];
-      attrs[attr] = value(gen);
+      attrs[attr] = gen.next().value;
     }
     return new App.Models[className](attrs);
   });
