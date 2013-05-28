@@ -147,18 +147,46 @@ commutativity() //passes silently
       </section>
 
       <section>
-        <h2>Another Real World Example</h2>
-        <div>Deep copy of a Class for dobetter.com</div>
-        <br>
-        <div>Requirements:</div>
-        <br>
-        <ul>
-          <li class='fragment'>Must copy it's own attributes, except it's start date.
-          <li class='fragment'>Must copy each unit's attributes, except for release job
-          <li class='fragment'>Each item in a unit must be cloned.
-        </ul>
-        <br><br>
-        <div class='fragment'>Let's see some code</div>
+        <h2>Generators from a more complex example</h2>
+
+        <code><pre>function modelObjGen(className, attrGens) {
+  return claire.label(className)(function() {
+    var attr, attrs, gen;
+
+    attrs = { name: value(AlphaStr) };
+    for (attr in attrGens) {
+      gen = attrGens[attr];
+      attrs[attr] = value(gen);
+    }
+    return new App.Models[className](attrs);
+  });
+};
+
+        </code></pre>
+      </section>
+
+      <section>
+        <h2>Generators from a more complex example</h2>
+
+        <code><pre>var SpecialItem = classObjGen('SpecialItem', {
+  type: claire.choice('Feedback', 'ContactForm', 'Document'),
+  info: gens.resize(5, ObjectGen(Any))
+});
+
+var EndOfUnit = classObjGen('EndOfUnit', {});
+
+var Video = classObjGen('Video', {
+  youTubeId: claire.frequency([1, Nothing], [9, Id])
+});
+
+var Item = claire.label('Item', claire.choice(SpecialItem, EndOfUnit, Video));
+
+var Unit = classObjGen('Unit', {
+  releaseJobId: claire.choice(Nothing, AlphaStr),
+  releaseOffset: gens.resize(40, PosInt),
+  items: gens.resize(6, ArrayGen(Item))
+});
+        </code></pre>
       </section>
 
       <section>
@@ -204,23 +232,6 @@ Num       = label 'num'  ((s) -> choose -s, s)
 Byte      = label 'byte' ((_) -> to-integer (choose 0, 255))
 Char      = label 'char' (transform char, Byte)
 Str       = label 'str'  (transform join, (repeat Char))
-        </code></pre>
-      </section>
-      <section>
-        <h2>String Generators</h2>
-        <br>
-        <pre><code>
-### -- Specialised textual types ---------------------------------------
-LowerChar    = transform char, -> choose-int 97, 122
-AlphaChar    = frequency [1, UpperChar], [9, LowerChar]
-AlphaStr     = transform join, (repeat AlphaChar)
-
-Id           = do
-               start = frequency [1, '_'], [2, '$'], [9, AlphaChar]
-               chars = frequency [1, NumChar], [9, start]
-               rest  = transform join, (repeat chars)
-
-               label 'id' (transform join, (sequence start, rest))
         </code></pre>
       </section>
 
