@@ -14,14 +14,14 @@ var App = {
     })
     ,Unit: bb.Model.extend({
       copy: function(){
-        return new App.Models.Unit(_.extend({
-        }, this.attributes))
+        return new App.Models.Unit(_.extend({}, this.attributes, {
+        }))
       }
     })
     ,Class: bb.Model.extend({
       copy: function(){
-        return new App.Models.Class(_.extend({
-        }, this.attributes))
+        return new App.Models.Class(_.extend({ }, this.attributes, {
+        }))
       }
     })
   }

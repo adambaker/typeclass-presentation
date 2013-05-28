@@ -1,6 +1,8 @@
 var claire = require('claire');
 var forAll = claire.forAll;
 
+assert = require('chai').assert;
+
 var gens = require('./generators')
 var AlphaStr = gens.AlphaStr, Id = gens.Id, Str = gens.Str;
 var Any = gens.Any, Int = gens.Int, Nothing = gens.Nothing;
@@ -50,7 +52,6 @@ var Unit = classObjGen('Unit', {
 });
 
 var Class = classObjGen('Class', {
-  launchJobId: claire.choice(Nothing, AlphaStr),
   startDate: claire.transform(function(m) {return m.toDate();}, gens.Moment),
   units: gens.resize(7, ArrayGen(Unit))
 });
@@ -76,8 +77,9 @@ describe('Unit copy', function() {
   it('is the same class as original', forAll(Unit).satisfy(withCopy(sameClass)).asTest());
   it('has no releaseJobId and the same offset', forAll(Unit).satisfy(function(unit) {
     var copy = unit.copy()
-    return copy.get('releaseJobId') === undefined &&
-      copy.get('releaseOffset') === unit.get('releaseOffset');
+    assert.isUndefined(copy.get('releaseJobId'))
+    assert.equal(copy.get('releaseOffset'), unit.get('releaseOffset'));
+    return true
   }).asTest());
   it('has copies of each item in the items array', forAll(Unit).satisfy(function(unit) {
     var copyItems, unitItems;
@@ -95,9 +97,9 @@ describe('Class copy', function() {
     return withCopy(distinct)(cls) && withCopy(sameClass)(cls)
   }).asTest());
 
-  it('has undefined startDate and launchJobId', forAll(Class).satisfy(function(cls) {
+  it('has undefined startDate', forAll(Class).satisfy(function(cls) {
     var copy = cls.copy()
-    return copy.startDate === undefined && copy.launchJobId === undefined;
+    return copy.startDate === undefined;
   }).asTest());
 
   it('has copies of the units in the unit array', forAll(Class).satisfy(function(cls) {
