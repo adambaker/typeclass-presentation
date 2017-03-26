@@ -40,35 +40,34 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section>
-          <h1>Functional Programming's Relentless Bug Hunter: Claire</h1>
+          <h1>Type Classes in Scala</h1>
           <br>
-          <div>Adam Baker</div>
-          <div>adam@dobetter.com</div>
+          <h2>The Origins <br>The Motivation <br>The Pattern</h2>
         </section>
 
         <section>
-          <h2>Property Based Testing</h2>
-          <br>
-          <div>You may have heard of this from libraries such as QuickCheck and ScalaCheck
-          </div>
-          <br>
-          <div>Claire is a library by Quildreen Motta that helps you test invariants
-            in your javascript</div>
+          <h2>The origins: type classes in Haskell</h2>
+          <h3>Start with an oridinary type system</h3>
+          <ul>
+            <li>Base types:<br> <code>3 :: Int</code><br> <code>'c' :: Char</code></li>
+            <li class='fragment'>Function type:<br> <code>chr :: Int -> Char</code></li>
+            <li class='fragment'>
+              Parametric polypmorphism:<br>
+              <code><pre>
+map :: (a -> b) -> ([a] -> [b])
+              </pre></code>
+            </li>
+          </ul>
         </section>
 
         <section>
-          <h2>Invariants!</h2>
+          <h2>Type classes in Haskell</h2>
           <br>
-          <div>We are used to writing tests like this:
-            <br>
-            <br>
-            <i>e</i><sup>π<i>i</i></sup> = -1
+          <div>
+            What about summing all the elements of a list?
           </div>
+          <div class="fragment"></div>
           <br>
-          <div class='fragment'>We should start writing tests like this:
-            <br><br>
-            ∀<i>x. e<sup>xi</sup> </i> = cos(<i>x</i>) + <i>i</i> sin(<i>x</i>)
-          </div>
         </section>
 
         <section>
