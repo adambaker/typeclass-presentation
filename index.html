@@ -1,43 +1,32 @@
 <!doctype html>
 <html lang="en">
-
-	<head>
-		<meta charset="utf-8">
-
-		<title>reveal.js - The HTML Presentation Framework</title>
-
-		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-		<meta name="author" content="Hakim El Hattab">
-
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-		<link rel="stylesheet" href="css/reveal.min.css">
+  <head>
+    <meta charset="utf-8">
+    <title>reveal.js - The HTML Presentation Framework</title>
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="css/reveal.min.css">
     <link rel="stylesheet" href="css/theme/serif.css" id="theme">
-
-		<!-- For syntax highlighting -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
-
-		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
-		<script>
-			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
-		</script>
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+    <script>
+      document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+    </script>
 
     <style>
       .reveal h1 { font-size: 2.5em; }
     </style>
-		<!--[if lt IE 9]>
-		<script src="lib/js/html5shiv.js"></script>
-		<![endif]-->
-	</head>
-
-	<body>
-
-		<div class="reveal">
-
-			<!-- Any section element inside of this container is displayed as a slide -->
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
         <section>
           <h1>Type Classes in Scala</h1>
@@ -52,287 +41,286 @@
             <li>Base types:<br> <code>3 :: Int</code><br> <code>'c' :: Char</code></li>
             <li class='fragment'>Function type:<br> <code>chr :: Int -> Char</code></li>
             <li class='fragment'>
-              Parametric polypmorphism:<br>
-              <code><pre>
-map :: (a -> b) -> ([a] -> [b])
-              </pre></code>
+            Parametric polypmorphism:<br>
+            <code>map :: (a -> b) -> ([a] -> [b])</code>
             </li>
           </ul>
         </section>
 
         <section>
           <h2>Type classes in Haskell</h2>
-          <br>
-          <div>
-            What about summing all the elements of a list?
-          </div>
-          <div class="fragment"></div>
-          <br>
+          What about summing the elements of a list?
+          <br><br>
+          <ul>
+            <li class='fragment'><code>sum :: [a] -> a</code><br> Too General
+            </li>
+            <li class='fragment'>
+            <code>intSum :: [Int] -> Int</code><br>
+            <code>floatSum :: [Float] -> Float</code><br> Too Specific
+            </li>
+            <li class='fragment'>
+            <code>sum :: Num a => [a] -> a</code><br> Just Right
+            </li>
+          </ul>
         </section>
 
         <section>
-          <h2>Invariants!</h2>
+          <h2>But Scala has classes and traits for polymorphism</h2>
           <br>
-          <div>An old idea in computer science</div>
+          <div>Do we really need this? No, but we want it.</div>
           <br>
           <div>
             <ul>
-              <li class="fragment">Preconditions and Postconditions</li>
-              <li class="fragment">Loop Invariants</li>
+              <li class="fragment">Types can be made an instance of a class
+              outside of the type's definition.
+              </li>
+              <li class="fragment">Dispatch on any argument or the return type.
+              </li>
+              <li class="fragment">Can use multi dispatch (type relations?)</li>
             </ul>
           </div>
-          <br>
-          <div class="fragment">Usually expressed in a functional language</div>
         </section>
         <section>
-          <h2>The Strategy</h2>
+          <h2>But How?</h2>
+          <div>
+            In Haskell, the type class gets compiled into a parameter passed
+            by the compiler.<br><br>
+            <code>sum :: Num a => [a] -> a</code><br>
+            Becomes <br>
+            <code>sum :: Num -> [a] -> a</code><br>
+          </div>
+        </section>
+        <section>
+          <h2>But How?</h2>
+          <div>
+            Scala lets the compiler pass implicit args, so that's how we'll
+            encode type classes<br><br>
+          </div>
+          <div class='fragment'>
+            <pre><code class='scala'>
+trait TraversableOnce[A] {
+  def sum[B >: A](implicit num: Numeric[B]): B = foldLeft(num.zero)(num.plus)
+}
+            </code></pre>
+            Notice the return type polymorphism: the Numeric instance
+            provides a value to use when the TraversableOnce is empty
+          </div>
+        </section>
+
+        <section>
+          <h2>But How?</h2>
+          <div>Now make an implicit object of type
+            <code>Numeric[T]</code> to use <code>sum</code> with a collection
+            of <code>T</code>
+          </div>
+          <pre class='fragment'><code class='scala'>
+case class Complex(r: Double, i: Double)
+implicit object complexNum extends Numeric[Complex] {
+  def plus(x: Complex, y: Complex): Complex = Complex(x.r+y.r, x.i+y.i)
+  def zero = Complex(0, 0)
+}
+List(Complex(1, 0), Complex(2, 4), Complex(3, 3)).sum
+// Complex(6, 7)
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Examples: JSON</h2>
+          <pre><code class='scala'>
+trait play.api.libs.json.Writes[-A] {
+  def writes(o: A): JsValue
+}
+
+def toJson[T](o: T)(implicit tjs: Writes[T]): JsValue
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Examples: JSON</h2>
+          <pre><code class='scala'>
+implicit def nelWrites[T: Writes]: Writes[NonEmptyList[T]] =
+  new Writes[NonEmptyList[T]]{
+    override def writes(nel: NonEmptyList[T]) = Json.toJson(nel.toList)
+  }
+implicit val SegLabelWrites = Json.writes[SegmentAndLabel]
+          </code></pre>
+          <div class="fragment">Why a typeclass?</div>
+        </section>
+
+        <section>
+          <h2>Examples: JSON</h2>
+          <pre><code class='scala'>
+trait play.api.libs.json.Reads[A] {
+   def reads(json: JsValue): JsResult[A] 
+}
+
+def fromJson[T](json: JsValue)(implicit fjs: Reads[T]): JsResult[T] 
+
+implicit val SALParamsReads = Json.reads[SegmentAndLabelParams]
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Examples: CanBuildFrom</h2>
+          Who uses <code>.map</code>?
+          <div class='fragment'>
+            Who's seen this?
+            <pre><code class='scala'>
+def map[B, That](f: (A) ⇒ B)(implicit bf: CanBuildFrom[Repr, B, That]): That 
+            </code></pre>
+          </div>
+          <div class="fragment">
+            What's up with this type?
+          </div>
+        </section>
+
+        <section>
+          <h2>Examples: CanBuildFrom</h2>
+          <pre><code class='scala'>
+trait TraversableLike[+A, +Repr] {
+  def map[B,That](f:(A) ⇒ B)(implicit bf:CanBuildFrom[Repr,B,That]):That
+}
+class List[+A] extends TraversableLike[A, List[A]]
+          </code></pre>
+          <pre class="fragment"><code class='scala'>
+trait CanBuildFrom[-From, -Elem, +To] {
+  def apply(from: From): Builder[Elem, To]
+}
+trait Builder[-Elem, +To] {
+  def +=(elem: Elem): Builder.this.type
+  def result(): To
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>Examples: CanBuildFrom</h2>
+          For a thorough description, see
+          <a href="http://docs.scala-lang.org/overviews/core/architecture-of-scala-collections.html">The Architecture of Scala Collections</a>
+          <br>http://docs.scala-lang.org/overviews/core/architecture-of-scala-collections.html
+        </section>
+
+        <section>
+          <h2>Example: Rig</h2>
+          Implemented in Spire<br>
+          <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.367.5897&rep=rep1&type=pdf">Semiring Frameworks and Algorithms for Shortest-Distance Problems</a> by Mehryar Mohri
+        </section>
+
+        <section>
+          <h2>Example: Rig</h2>
+          <pre><code class='scala'>
+trait Rig[A] {
+  def zero: A
+  def one: A
+  def plus(x: A, y: A): A
+  def times(x: A, y: A): A
+}
+//Laws: (a + b) + c = a + (b + c)
+//      (a * b) * c = a * (b * c)
+//      a + b = b + a
+//      a + 0 = 0 + a = a = 1 * a = a * 1
+//      a * (b + c) = a*b + a*c
+//      (a + b)*c = a*c + b*c
+          </code></pre>
+          <div class="fragment">
+            Great for weighted graph traversal
+          </div>
+        </section>
+
+        <section>
+          <h2>Example: Rig</h2>
+          <pre><code class='scala'>
+object ProbRig extends Rig[Double] {
+  def zero: 0.0
+  def one: 1.0
+  def plus(x, y): x + y
+  def times(x, y): x * y
+}
+          </code></pre>
+          <pre class='fragment'><code class='scala'>
+object LogRig extends Rig[Double] {
+  def zero: -Infinity
+  def one: 0.0
+  def plus(x, y): log(exp(x) + exp(y))
+  def times(x, y): x + y
+}
+          </code></pre>
+        </section>
+        <section>
+          <h2>Example: Rig</h2>
+          <pre><code class='scala'>
+object Tropical extends Rig[Double] {
+  def zero: -Infinity
+  def one: 0.0
+  def plus(x, y): max
+  def times(x, y): x + y
+}
+          </code></pre>
+          <pre class='fragment'><code class='scala'>
+object Tropical3 extends Rig[(Double, Double, Double)] {
+  def zero: (-Infinity, -Infinity, -Infinity)
+  def one: (0.0, -Infinity, -Infinity)
+  def plus(x, y): max3(x._1, x._2, x._3, y._1, y._2, y._3)
+  def times(xA, y: A): (x._1 + y._1, x._2 + y._2, x._3 + y._3)
+}
+          </code></pre>
+        </section>
+
+        <section>
+          <h2>References</h2>
           <ol>
-            <li> Define generators
-            <li class='fragment'> Identify invariants
-            <li class='fragment'> Convert to Claire property
-            <li class='fragment'> Test property on generated data
-            <li class='fragment'> ...
-            <li class='fragment'> No more bugs!
+            <li>
+              <a href="http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html">The Neophyte's Guide to Scala Part 12: Type Classes</a><br>
+              http://danielwestheide.com/blog/2013/02/06/the-neophytes-guide-to-scala-part-12-type-classes.html
+            </li>
+            <li>
+              <a href="https://stackoverflow.com/questions/8122109/difference-between-oop-interfaces-and-fp-type-classes">Difference between OOP interfaces and FP type classes</a>
+              <br>https://stackoverflow.com/questions/8122109/difference-between-oop-interfaces-and-fp-type-classes
+            </li>
+            <li>
+              <a href="http://docs.scala-lang.org/overviews/core/architecture-of-scala-collections.html">The Architecture of Scala Collections</a>
+              <br>http://docs.scala-lang.org/overviews/core/architecture-of-scala-collections.html
+            </li>
+            <li>
+              <a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.367.5897&rep=rep1&type=pdf">Semiring Frameworks and Algorithms for Shortest-Distance Problems</a> by Mehryar Mohri<br>
+              http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.367.5897&rep=rep1&type=pdf
+            </li>
           </ol>
         </section>
 
-      <section>
-        <h2>Generators, Properties, Tests</h2>
-        <div>
-          <pre><code class='javascript'>
-var claire = require('claire')
-var _ = claire.data
-
-                  //two generators, Int and Num
-var commutativity = claire.forAll(_.Int, _.Num)
-  .satisfy(function(integer, real){  //the property being tested
-    return integer+real === real+integer
-  }).asTest() //returns a function
-
-//use it in mocha
-describe('addition', function(){
-  it('is commutative', commutativity)
-})
-
-//or invoke it to see the results
-commutativity() //passes silently
-          </code></pre>
-        </div>
-      </section>
-
-      <section>
-        <h2>Diagnosing Properties</h2>
-        <br>
-      <div>
-      <pre><code>var sorted_p = forAll( _.Array(_.Int) )
-        .satisfy(function(xs) {
-          xs = sorted(xs)
-          return xs.every(function(a, i) {
-            return i == 0 || a &gt;= xs[i - 1]
-          })
-        }).classify(function(xs) {
-          return xs.length == 0 || xs.length == 1?  'trivial' : '&gt; 1'
-        }).asTest({verbose: true, times: 1000})()</code><code>
-      //  + OK passed 1000 tests.
-      //  &gt; Collected test data:
-      //      o 98% - &gt; 1
-      //      o 2% - trivial
-
-      </code></pre>
       </div>
-      </section>
+    </div>
 
-      <section>
-        <h2>A Simple Example</h2>
-        <div>From a real app</div>
-        <div>To the command line!</div>
-      </section>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.min.js"></script>
 
-      <section>
-        <h2>Generators from a more complex example</h2>
+    <script>
 
-        <code><pre>function modelObjGen(className, attrGens) {
-  return claire.label(className)(function() {
-    var attr, attrs, gen;
+      // Full list of configuration options available here:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+      controls: true,
+      progress: true,
+      history: true,
+      center: true,
 
-    attrs = {};
-    for (attr in attrGens) {
-      gen = attrGens[attr];
-      attrs[attr] = gen.next().value;
-    }
-    return new App.Models[className](attrs);
-  });
-};
+      theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+      transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
 
-        </code></pre>
-      </section>
+      // Optional libraries used to extend on reveal.js
+      dependencies: [
+      { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+      { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+      { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+      { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+      // { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+      // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+      ]
+      });
 
-      <section>
-        <h2>Generators from a more complex example</h2>
+    </script>
 
-        <code><pre>var SpecialItem = classObjGen('SpecialItem', {
-  type: claire.choice('Feedback', 'ContactForm', 'Document'),
-  info: gens.resize(5, ObjectGen(Any))
-});
-
-var Video = classObjGen('Video', {
-  youTubeId: claire.frequency([1, Nothing], [9, Id])
-});
-
-var Item = claire.label('Item', claire.choice(SpecialItem, Video));
-
-var Unit = classObjGen('Unit', {
-  items: gens.resize(6, ArrayGen(Item))
-});
-        </code></pre>
-      </section>
-
-      <section>
-        <h2>Properties of Addition and Multiplication</h2>
-        <div>
-          <ul>
-            <li>associativity: (a+b)+c = a+(b+c)</li>
-            <li>commutativity: a+b = b+a</li>
-            <li>identity: a+0 = a</li>
-            <li>closure: ∀ a,b ∈ ℤ. (a+b) ∈ ℤ</li>
-          </ul>
-          <br><br>
-          <div class='fragment'>Test with Int, Num, and BigInt<br>
-          for both addition and multiplication</div>
-          <br>
-          <div class='fragment'>Which ones fail?</div>
-        </div>
-      </section>
-
-      <section>
-        <h2>Properties of Addition and Multiplication</h2>
-        <br>
-        <div>Two failures:</div>
-        <br>
-        <div class='fragment'>Num fails associativity of multiplication</div>
-        <div class='fragment'>BigInt fails associativity of addition</div>
-        <br>
-        <div class='fragment'>The Point: Claire makes it easy to test boundary conditions
-        and find corner cases.</div>
-      </section>
-
-      <section>
-        <h2>A Look Inside</h2>
-        <div>Some basic generators:</div>
-        <br>
-        <pre><code>
-char = String.from-char-code
-
-### -- Primitive data types --------------------------------------------
-Null      = as-generator null
-Undefined = as-generator void
-Bool      = choice true, false
-Num       = label 'num'  ((s) -> choose -s, s)
-Byte      = label 'byte' ((_) -> to-integer (choose 0, 255))
-Char      = label 'char' (transform char, Byte)
-Str       = label 'str'  (transform join, (repeat Char))
-        </code></pre>
-      </section>
-
-      <section>
-        <h2>Container Type Generators</h2>
-        <br>
-      <pre><code>
-### -- Container data types -------------------------------
-List = (...as) -> repeat (choice ...as)
-Map  = (...as) -> transform to-object, (
-                    repeat (sequence Id, (choice ...as))
-                  )
-
-#### λ to-object
-# :internal:
-# Folds a list of pairs into an object.
-#
-# :: [String, a] -> { String -> a }
-to-object = (as) -> as.reduce ((r, [k,v]) -> r <<< { "#k": v }), {}
-
-      </code></pre>
-      </section>
-
-      <section>
-        <h2>For the FP geeks</h2>
-        Claire's generators are monads: <br><br>
-        <code>claire.transform</code> acts as <code>fmap</code><br>
-        <code>.then</code> method on generators acts as monadic bind
-      </section>
-
-      <section>
-        <h2>What's in the Future?</h2>
-        <br><br>
-        <div>
-          <ol>
-            <li>Shrinking of counterexamples.</li>
-            <li class='fragment'>Generators based on generic lazy linked lists</li>
-            <li class='fragment'>Asynchronous tests</li>
-          </ol>
-        </div>
-      </section>
-
-      <section>
-        <h2>Why is this important?</h2>
-        <br>
-        <ul>
-          <li>Automated teting is important.
-          <li class='fragment'>XUnit testing automates test running.
-          <li class='fragment'>Propery based testing automates test generation.
-          <li class='fragment'>Shrinking will help automate the first step in debugging.
-          <li class='fragment'>Your confidence grows each time you run your test suite.
-          <li class='fragment'>Random data (often) finds corners better than I do.
-        </ul>
-      </section>
-
-      <section>
-        <h2>Thanks</h2>
-        <br>
-        <div>install:</div>
-        <code>npm install claire</code>
-        <br><br>
-        <div>github:</div>
-        <a href="https://github.com/killdream/claire">https://github.com/killdream/claire</a>
-        <br><br>
-        <a href="http://www.youtube.com/watch?v=XgasxJWgZBM">
-          Functional Programming: A Secret Weapon for Software Testing
-        </a><br>
-        a talk on QuickCheck by John Hughes.
-      </section>
-
-		</div>
-
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.min.js"></script>
-
-		<script>
-
-			// Full list of configuration options available here:
-			// https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				controls: true,
-				progress: true,
-				history: true,
-				center: true,
-
-				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-				transition: 'linear', // default/cube/page/concave/zoom/linear/fade/none
-
-				// Optional libraries used to extend on reveal.js
-				dependencies: [
-					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
-					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
-					// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
-					// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
-				]
-			});
-
-		</script>
-
-	</body>
+  </body>
 </html>
